@@ -1,0 +1,28 @@
+{
+  "name": "apple-ncc-feed",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "查詢台灣 NCC 網站最新通過認證的 Apple 產品",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnehs/apple-ncc-feed.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gnehs/apple-ncc-feed/issues"
+  },
+  "homepage": "https://github.com/gnehs/apple-ncc-feed#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.0",
+    "puppeteer": "^19.6.1",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "sharp": "^0.31.3",
+    "tesseract.js": "^4.0.2"
+  }
+}
