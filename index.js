@@ -12,7 +12,6 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   puppeteer.use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: false,
     executablePath: executablePath(),
     args: [
       '--no-sandbox',
