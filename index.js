@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { executablePath } from 'puppeteer';
-import fs from 'fs';
+import fs from 'fs-extra';
 import Tesseract from 'tesseract.js';
 import sharp from 'sharp';
 import crypto from 'crypto';
@@ -146,7 +146,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     await page.click(`a[href="javascript:__doPostBack('GridView1','Page$${currentPage + 2}')"]`);
     await page.waitForSelector(`a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`);
   }
-  fs.mkdirSync('dist', { recursive: true })
+  fs.copySync('public', 'dist')
   fs.writeFileSync('dist/index.json', JSON.stringify(result))
   console.log('🎉\tdone')
   await browser.close();

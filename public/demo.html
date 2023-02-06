@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.1.0/tocas.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Primary meta Tags -->
+  <title>蘋果 NCC 動態</title>
+  <meta name="title" content="蘋果 NCC 動態" />
+  <meta name="description" content="查看台灣 NCC 網站最新通過認證的 Apple 產品。" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="蘋果 NCC 動態" />
+  <meta property="og:description" content="查看台灣 NCC 網站最新通過認證的 Apple 產品。" />
+  <meta property="og:image" content="https://gnehs.github.io/apple-ncc-feed/og.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content="蘋果 NCC 動態" />
+  <meta property="twitter:description" content="查看台灣 NCC 網站最新通過認證的 Apple 產品。" />
+  <meta property="twitter:image" content="https://gnehs.github.io/apple-ncc-feed/og.jpg" />
+
+  <!-- Icon -->
+  <link rel="icon" href="./icon.png" sizes="any" />
+</head>
+
+<body>
+  <script type="module">
+    import { createElement, render, Component, h } from 'https://unpkg.com/preact@latest?module';
+    import { useRef, useState, useEffect, useCallback } from 'https://unpkg.com/preact@latest/hooks/dist/hooks.module.js?module';
+    import htm from 'https://unpkg.com/htm?module';
+    const html = htm.bind(h);
+    const feedItem = (props) => {
+      const keyTranslate = {
+        // 'old_id': '審定證明編號',
+        // 'new_id': '填報貿易 e 網的認證號碼',
+        // 'equip_name': '設備名稱',
+        // 'brand': '廠牌',
+        // 'model': '型號',
+        // 'verifydate': '審驗日期',
+        'deliver': '申請廠商',
+        'manufacturer': '製造廠商',
+        'verifyorg': '驗證機構',
+        'sar': 'SAR 值 (W/Kg)',
+        'photofunc': '拍照功能',
+        'photoalarm': '拍照時發出聲響功能',
+        'charger': '充電器',
+        'battery': '電池',
+        'reportlab': '出具檢驗報告之測試實驗室',
+        'labcountry': '測試實驗室所屬國家',
+        'pay_no': '繳款單號',
+        // 'discarded': '已棄用',
+      };
+      const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+      const statItem = (props) => html`
+      <div class="column">
+        <div class="ts-text is-bold">${props.title}</div>
+        <div class="ts-text is-secondary">${props.value != "" ? props.value : "空"}</div>
+        </div>`;
+      const statItems = (props) => html`
+        <div class="ts-grid is-stackable is-3-columns">
+          ${Object.entries(keyTranslate)
+          .filter(([key, title]) => props[key] != "")
+          .map(([key, title]) => html`<${statItem} title="${title}" value="${props[key]}" />`)}
+        </div>`
+      const Files = (props) => {
+        if (props.files.length == 0) return html`<div></div>`;
+        const [show, setShow] = useState(false);
+        const toggleShow = useCallback(() => setShow(!show), [show]);
+        return html`
+        <div class="ts-divider"></div>
+        <div class="ts-content is-secondary is-dense">
+          <div class="ts-accordion${show ? ` is-active` : ``}">
+            <div class="title" onClick=${toggleShow}>${show ? `` : `${props.files.length} 個`}附件</div>
+            <div class="content">
+              <div class="ts-grid is-3-columns is-stackable">
+              ${props.files.map(x => html`
+                <div class="column">
+                  <a class="ts-chip is-fluid is-outlined" href="${x.link}" target="_blank" style="justify-content: flex-start;">
+                    <span class="ts-icon is-file-icon is-regular"></span>
+                    ${x.name}
+                  </a>
+                </div>
+              `)}
+              </div>
+            </div>
+          </div>
+        </div>`
+      }
+
+
+      return html`
+        <div class="ts-box" id="${props.new_id}">
+          <div class="ts-content">
+            <div class="ts-row is-middle-aligned">
+              <div class="column is-fluid">
+                <div class="ts-header">${capitalizeFirstLetter(props.brand)}</div>
+                <div class="ts-meta is-secondary is-small">
+                  <span class="item">${props.equip_name}</span>
+                  <span class="item">${props.model}</span>
+                  </div>
+              </div>
+              <div class="column">
+                <div class="ts-text is-secondary is-end-aligned">${props.verifydate}</div>
+                <div class="ts-text is-secondary is-end-aligned">${props.new_id}</div>
+              </div>
+            </div>
+          </div>
+          <div class="ts-divider"></div>
+          <div class="ts-content">
+            <${statItems} ...${props}/>
+          </div>
+          <${Files} ...${props}/>
+        </div>
+        <div class="ts-space"></div>`;
+    }
+
+    const App = (props) => {
+      const [feed, setFeed] = useState([]);
+      useEffect(() => {
+        (async () => {
+          const data = await (await fetch('https://gnehs.github.io/apple-ncc-feed/')).json();
+          setFeed(data);
+        })()
+      }, []);
+      return html`
+      <div class="ts-content is-tertiary is-vertically-very-padded">
+        <div class="ts-container">
+          <div class="ts-header is-huge">Apple NCC feed</div>
+          <div class="ts-text is-secondary">查看台灣 NCC 網站最新通過認證的 Apple 產品。</div>
+          <div class="ts-meta is-secondary is-small">
+            <span class="item"><a class="ts-text is-external-link" href="https://github.com/gnehs/apple-ncc-feed" target="_blank">GitHub</a></span>
+            <span class="item"><a class="ts-text is-external-link" href="https://gnehs.github.io/apple-ncc-feed/" target="_blank">資料來源</a></span>
+          </div>
+        </div>
+      </div>
+      <div class="ts-container">
+        <div class="ts-space"></div>
+        <div class="ts-notice is-outlined">
+          <div class="title">Telegram 通知</div>
+          <div class="content">
+            好消息！透過發送指令 <span class="ts-text is-code">/subscribe apple-ncc</span> 給機器人 <a class="ts-text is-external-link" href="https://t.me/gnehsBot" target="_blank">@gnehsBot</a> 免費接收即時通知。
+          </div>
+        </div>
+        <div class="ts-space"></div>
+        ${feed.length
+          ? feed.map(x => html`<${feedItem} ...${x} />`)
+          : html`<div class="ts-center"><div class="ts-loading is-notched"></div></div>`}
+        </div>
+      `;
+    }
+
+    render(html`<${App} name="World" />`, document.body);
+  </script>
+</body>
+
+</html>
