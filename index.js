@@ -95,6 +95,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let linkIds = await page.evaluate(() => [...document.querySelectorAll(`a[id^="GridView1_ctl"]`)].map(x => x.getAttribute('id')).map(x => `#${x}`))
     for (let linkId of linkIds) {
       await page.click(linkId);
+      await delay(1000);
       await page.waitForSelector(`#Panel1`);
       let data = await page.evaluate(() => {
         let result = {}
@@ -140,6 +141,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       }
       console.log(`🕷\t${result.length}/${items}`)
       await page.click(`[type="submit"]`)
+      await delay(1000);
       await page.waitForSelector(`#GridView1`);
     }
     if (currentPage === pages - 1) break
