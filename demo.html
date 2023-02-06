@@ -74,22 +74,27 @@
         if (props.files.length == 0) return html`<div></div>`;
         const [show, setShow] = useState(false);
         const toggleShow = useCallback(() => setShow(!show), [show]);
+        const fileCats = [...new Set(props.files.map(x => x.category))];
         return html`
         <div class="ts-divider"></div>
         <div class="ts-content is-secondary is-dense">
           <div class="ts-accordion${show ? ` is-active` : ``}">
             <div class="title" onClick=${toggleShow}>${show ? `` : `${props.files.length} 個`}附件</div>
             <div class="content">
-              <div class="ts-grid is-3-columns is-stackable">
-              ${props.files.map(x => html`
-                <div class="column">
-                  <a class="ts-chip is-fluid is-outlined" href="${x.link}" target="_blank" style="justify-content: flex-start;">
-                    <span class="ts-icon is-file-icon is-regular"></span>
-                    ${x.name}
-                  </a>
+              ${fileCats.map(cat => html`
+                <div class="ts-text is-description">${cat}</div>
+                <div class="ts-grid is-3-columns is-stackable">
+                  ${props.files.filter(x => x.category == cat).map(x => html`
+                    <div class="column">
+                      <a class="ts-chip is-fluid is-outlined" href="${x.link}" target="_blank" style="justify-content: flex-start;">
+                        <span class="ts-icon is-file-icon is-regular"></span>
+                        ${x.name}
+                      </a>
+                    </div>
+                  `)}
                 </div>
+                <div class="ts-space"></div>
               `)}
-              </div>
             </div>
           </div>
         </div>`
