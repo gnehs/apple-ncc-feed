@@ -12,6 +12,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   puppeteer.use(StealthPlugin());
 
   const browser = await puppeteer.launch({
+    headless: false,
     executablePath: executablePath(),
     args: [
       '--no-sandbox',
@@ -102,11 +103,13 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       let files = []
       document.querySelectorAll(`[id^="FileList"]`).forEach(x => {
         let fileRows = x.querySelectorAll('tr')
+        let category = x.parentElement.parentElement.parentElement.querySelector('td:nth-child(1)').innerText.replace(/：$/, '') || '其他'
         fileRows.forEach(row => {
           let columns = row.querySelectorAll('td')
           if (columns.length === 0) return
           files.push({
             name: columns[1].innerText,
+            category,
             link: `https://nccmember.ncc.gov.tw/Application/Fun/${columns[3].querySelector('a').getAttribute('href')}`,
           })
         })
