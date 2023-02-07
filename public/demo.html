@@ -172,7 +172,10 @@
         ${feed.length
           ? feed.map(x => html`<${feedItem} ...${x} />`)
           : html`<div class="ts-center"><div class="ts-loading is-notched"></div></div>`}
-        </div>
+        <div class="ts-space"></div>
+        <div class="is-center-aligned ts-text is-secondary">本網站僅會顯示最新 30 筆資料，若要查看先前的資料，請至 <a class="ts-text is-external-link" href="https://nccmember.ncc.gov.tw/Application/Fun/Fun016.aspx" target="_blank">NCC</a> 網站查詢。</div>
+        <div class="ts-space"></div>
+      </div>
       `;
     }
 
