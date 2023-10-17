@@ -107,8 +107,8 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     )
   );
   if (!FETCH_ALL) {
-    pages = 3;
-    items = 30;
+    pages = 10;
+    items = 100;
   }
   console.log("FETCH_ALL", FETCH_ALL);
   console.log("pages", pages);
@@ -170,7 +170,10 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
           verifydateMatch[2]
         }/${verifydateMatch[3]}`;
       }
-      if (data.deliver.includes("美商蘋果")) {
+      if (
+        data.deliver.includes("美商蘋果") &&
+        !result.some((x) => x.new_id == data.new_id)
+      ) {
         result.push(data);
       }
       console.log(`🕷\t${result.length}/${items}`);
