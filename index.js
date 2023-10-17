@@ -125,58 +125,62 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       await page.click(linkId);
       await delay(1000);
       await page.waitForSelector(`#Panel1`);
-      let data = await page.evaluate(() => {
-        let result = {};
-        document.querySelectorAll(`[id^="LA"]`).forEach((x) => {
-          let key = x.getAttribute("id").replace("LA_", "").toLowerCase();
-          // remove last ,
-          let value = x.innerText;
-          try {
-            value = value.replace(/,$/, "");
-          } catch (e) {
-            console.log(value, e);
-          }
-          result[key] = value;
-        });
-        let files = [];
-        document.querySelectorAll(`[id^="FileList"]`).forEach((x) => {
-          let fileRows = x.querySelectorAll("tr");
-          let category =
-            x.parentElement.parentElement.parentElement
-              .querySelector("td:nth-child(1)")
-              .innerText.replace(/：$/, "") || "其他";
-          fileRows.forEach((row) => {
-            let columns = row.querySelectorAll("td");
-            if (columns.length === 0) return;
-            files.push({
-              name: columns[1].innerText,
-              category,
-              link: `https://nccmember.ncc.gov.tw/Application/Fun/${columns[3]
-                .querySelector("a")
-                .getAttribute("href")}`,
+      try {
+        let data = await page.evaluate(() => {
+          let result = {};
+          document.querySelectorAll(`[id^="LA"]`).forEach((x) => {
+            let key = x.getAttribute("id").replace("LA_", "").toLowerCase();
+            // remove last ,
+            let value = x.innerText;
+            try {
+              value = value.replace(/,$/, "");
+            } catch (e) {
+              console.log(value, e);
+            }
+            result[key] = value;
+          });
+          let files = [];
+          document.querySelectorAll(`[id^="FileList"]`).forEach((x) => {
+            let fileRows = x.querySelectorAll("tr");
+            let category =
+              x.parentElement.parentElement.parentElement
+                .querySelector("td:nth-child(1)")
+                .innerText.replace(/：$/, "") || "其他";
+            fileRows.forEach((row) => {
+              let columns = row.querySelectorAll("td");
+              if (columns.length === 0) return;
+              files.push({
+                name: columns[1].innerText,
+                category,
+                link: `https://nccmember.ncc.gov.tw/Application/Fun/${columns[3]
+                  .querySelector("a")
+                  .getAttribute("href")}`,
+              });
             });
           });
+
+          return { ...result, files };
         });
 
-        return { ...result, files };
-      });
-
-      // parse verifydate
-      let verifydate = data.verifydate;
-      let verifydateMatch = verifydate.match(/(\d{3})(\d{2})(\d{2})/);
-      if (verifydateMatch) {
-        data.verifydate_raw = verifydate;
-        data.verifydate = `${parseInt(verifydateMatch[1]) + 1911}/${
-          verifydateMatch[2]
-        }/${verifydateMatch[3]}`;
+        // parse verifydate
+        let verifydate = data.verifydate;
+        let verifydateMatch = verifydate.match(/(\d{3})(\d{2})(\d{2})/);
+        if (verifydateMatch) {
+          data.verifydate_raw = verifydate;
+          data.verifydate = `${parseInt(verifydateMatch[1]) + 1911}/${
+            verifydateMatch[2]
+          }/${verifydateMatch[3]}`;
+        }
+        if (
+          data.deliver.includes("美商蘋果") &&
+          !result.some((x) => x.new_id == data.new_id)
+        ) {
+          result.push(data);
+        }
+        console.log(`🕷\t${result.length}/${items}`);
+      } catch (e) {
+        console.log(e);
       }
-      if (
-        data.deliver.includes("美商蘋果") &&
-        !result.some((x) => x.new_id == data.new_id)
-      ) {
-        result.push(data);
-      }
-      console.log(`🕷\t${result.length}/${items}`);
       await page.click(`[type="submit"]`);
       await delay(1000);
       await page.waitForSelector(`#GridView1`);
