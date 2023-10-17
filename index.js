@@ -81,19 +81,19 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // changed sort to latest
   await page.waitForSelector(
-    `a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`
+    `a[href="javascript:__doPostBack('GridView1','Sort$Verify_Date')"]`
   );
   await page.click(
-    `a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`
+    `a[href="javascript:__doPostBack('GridView1','Sort$Verify_Date')"]`
   );
   await page.waitForSelector(
-    `a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`
+    `a[href="javascript:__doPostBack('GridView1','Sort$Verify_Date')"]`
   );
   await page.click(
-    `a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`
+    `a[href="javascript:__doPostBack('GridView1','Sort$Verify_Date')"]`
   );
   await page.waitForSelector(
-    `a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`
+    `a[href="javascript:__doPostBack('GridView1','Sort$Verify_Date')"]`
   );
   // build result
   let pages = await page.evaluate(() =>
@@ -183,7 +183,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       `a[href="javascript:__doPostBack('GridView1','Page$${currentPage + 2}')"]`
     );
     await page.waitForSelector(
-      `a[href="javascript:__doPostBack('GridView1','Sort$verifydate_desc')"]`
+      `a[href="javascript:__doPostBack('GridView1','Sort$Verify_Date')"]`
     );
   }
   fs.copySync("public", "dist");
