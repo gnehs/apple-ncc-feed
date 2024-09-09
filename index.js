@@ -6,6 +6,7 @@ import Tesseract from "tesseract.js";
 import sharp from "sharp";
 import crypto from "crypto";
 const FETCH_ALL = false;
+const DELAY_TIME = 5000;
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 (async () => {
   // Add stealth plugin and use defaults (all evasion techniques)
@@ -57,7 +58,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   async function submitForm() {
     await resolveCaptcha();
     await page.type("#tx_brand", "apple");
-    await delay(2500);
+    await delay(DELAY_TIME);
     await page.click("#bt_select");
   }
   await submitForm();
@@ -123,7 +124,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     );
     for (let linkId of linkIds) {
       await page.click(linkId);
-      await delay(2500);
+      await delay(DELAY_TIME);
       await page.waitForSelector(`#Panel1`);
       try {
         let data = await page.evaluate(() => {
@@ -181,8 +182,8 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       } catch (e) {
         console.log(e);
       }
-      await page.click(`[type="submit"]`);
-      await delay(2500);
+      await page.goBack();
+      await delay(DELAY_TIME);
       await page.waitForSelector(`#GridView1`);
     }
     if (currentPage === pages - 1) break;
