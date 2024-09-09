@@ -57,7 +57,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   async function submitForm() {
     await resolveCaptcha();
     await page.type("#tx_brand", "apple");
-    await delay(1000);
+    await delay(2500);
     await page.click("#bt_select");
   }
   await submitForm();
@@ -123,7 +123,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     );
     for (let linkId of linkIds) {
       await page.click(linkId);
-      await delay(1000);
+      await delay(2500);
       await page.waitForSelector(`#Panel1`);
       try {
         let data = await page.evaluate(() => {
@@ -182,7 +182,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
         console.log(e);
       }
       await page.click(`[type="submit"]`);
-      await delay(1000);
+      await delay(2500);
       await page.waitForSelector(`#GridView1`);
     }
     if (currentPage === pages - 1) break;
